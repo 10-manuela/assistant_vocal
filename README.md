@@ -9,7 +9,3 @@ Fonctionnalités Clés :
 • Cerveau Contextuel Local : Propulsé par Ollama, l'assistant possède une mémoire de conversation active lui permettant de se souvenir des répliques précédentes et de maintenir un dialogue naturel et cohérent.
 
 • Interface Holographique Cinétique : Développée en CustomTkinter, l'interface arbore un look futuriste bleu électrique. Des anneaux concentriques tournent en sens inverses de manière asynchrone, pulsent en mode attente, et vibrent dynamiquement au rythme exact de la voix lorsque l'IA s'exprime.
-
-Technologies utilisées : Python, Ollama (Llama 3.2), Faster-Whisper, CustomTkinter, SoundDevice, NumPy & SciPy (Analyse de signal/FFT), Pyttsx3.
-
-Pour finaliser l'identité de votre projet, si vous le souhaitez, je peux vous proposer une liste d'idées de noms futuristes ou technologiques (à la manière de Jarvis). Est-ce que cela vous intéresse ?
