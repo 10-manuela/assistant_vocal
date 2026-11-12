@@ -1,0 +1,11 @@
+pyproject.toml
+src/assistant_vocal/__init__.py
+src/assistant_vocal/config.py
+src/assistant_vocal/logger.py
+src/assistant_vocal/main.py
+src/assistant_vocal.egg-info/PKG-INFO
+src/assistant_vocal.egg-info/SOURCES.txt
+src/assistant_vocal.egg-info/dependency_links.txt
+src/assistant_vocal.egg-info/entry_points.txt
+src/assistant_vocal.egg-info/requires.txt
+src/assistant_vocal.egg-info/top_level.txt
