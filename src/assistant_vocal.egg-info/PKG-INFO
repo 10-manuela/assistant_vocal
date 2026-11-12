@@ -1,8 +1,0 @@
-Metadata-Version: 2.4
-Name: assistant_vocal
-Version: 0.1.0
-Summary: Assistant vocal pour entretien professionnel, sans interface textuelle
-Requires-Python: >=3.11
-Requires-Dist: PyYAML>=6.0
-Provides-Extra: dev
-Requires-Dist: pytest>=8.0; extra == "dev"
