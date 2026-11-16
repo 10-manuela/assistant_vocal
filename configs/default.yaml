@@ -4,6 +4,11 @@ log_level: INFO
 audio:
   sample_rate: 16000
   channels: 1
+  block_ms: 32
+  input_device: null
+  output_device: null
+  vad_threshold: 0.5
+  min_silence_ms: 700
 
 llm:
   host: http://localhost:11434

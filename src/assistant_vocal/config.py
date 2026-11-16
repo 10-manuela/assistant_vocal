@@ -14,6 +14,11 @@ DEFAULT_CONFIG_PATH = ROOT_DIR / "configs" / "default.yaml"
 class AudioConfig:
     sample_rate: int = 16000
     channels: int = 1
+    block_ms: int = 32
+    input_device: int | str | None = None
+    output_device: int | str | None = None
+    vad_threshold: float = 0.5
+    min_silence_ms: int = 700
 
 
 @dataclass

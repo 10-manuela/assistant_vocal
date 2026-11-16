@@ -1,2 +1,5 @@
 PyYAML>=6.0
 pytest>=8.0
+numpy>=1.26
+sounddevice>=0.4.6
+silero-vad>=5.1
