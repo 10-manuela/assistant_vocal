@@ -45,6 +45,13 @@ class STTConfig:
 
 
 @dataclass
+class TTSConfig:
+    backend: str = "piper"
+    voice: str = "fr_FR-siwis-medium"
+    models_dir: str = "models/tts"
+
+
+@dataclass
 class AppConfig:
     language: str = "fr"
     log_level: str = "INFO"
@@ -52,6 +59,7 @@ class AppConfig:
     llm: LLMConfig = field(default_factory=LLMConfig)
     storage: StorageConfig = field(default_factory=StorageConfig)
     stt: STTConfig = field(default_factory=STTConfig)
+    tts: TTSConfig = field(default_factory=TTSConfig)
 
 
 def _build(cls, data: dict):
@@ -65,6 +73,7 @@ _SECTIONS = {
     "llm": LLMConfig,
     "storage": StorageConfig,
     "stt": STTConfig,
+    "tts": TTSConfig,
 }
 
 
