@@ -29,11 +29,17 @@ class LLMConfig:
 
 
 @dataclass
+class StorageConfig:
+    db_path: str = "data/assistant.db"
+
+
+@dataclass
 class AppConfig:
     language: str = "fr"
     log_level: str = "INFO"
     audio: AudioConfig = field(default_factory=AudioConfig)
     llm: LLMConfig = field(default_factory=LLMConfig)
+    storage: StorageConfig = field(default_factory=StorageConfig)
 
 
 def _build(cls, data: dict):
@@ -46,8 +52,10 @@ def load_config(path: Path | str | None = None) -> AppConfig:
     path = Path(path) if path else DEFAULT_CONFIG_PATH
     raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
 
-    audio = _build(AudioConfig, raw.pop("audio", {}) or {})
-    llm = _build(LLMConfig, raw.pop("llm", {}) or {})
-    base = _build(AppConfig, {k: v for k, v in raw.items() if k not in ("audio", "llm")})
-    base.audio, base.llm = audio, llm
+    sections = ("audio", "llm", "storage")
+    audio = _build(AudioConfig, raw.get("audio") or {})
+    llm = _build(LLMConfig, raw.get("llm") or {})
+    storage = _build(StorageConfig, raw.get("storage") or {})
+    base = _build(AppConfig, {k: v for k, v in raw.items() if k not in sections})
+    base.audio, base.llm, base.storage = audio, llm, storage
     return base
