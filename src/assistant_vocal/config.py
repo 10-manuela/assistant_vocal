@@ -24,8 +24,11 @@ class AudioConfig:
 @dataclass
 class LLMConfig:
     host: str = "http://localhost:11434"
-    model: str = "qwen2.5:3b"
+    model: str = "llama3.2:3b"
     temperature: float = 0.7
+    num_ctx: int = 4096
+    keep_alive: str = "30m"
+    timeout: float = 120.0
 
 
 @dataclass

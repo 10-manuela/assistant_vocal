@@ -14,6 +14,9 @@ llm:
   host: http://localhost:11434
   model: qwen2.5:3b
   temperature: 0.7
+  num_ctx: 4096
+  keep_alive: 30m
+  timeout: 120
 
 storage:
   db_path: data/assistant.db
