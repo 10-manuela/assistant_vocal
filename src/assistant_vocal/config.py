@@ -34,12 +34,21 @@ class StorageConfig:
 
 
 @dataclass
+class STTConfig:
+    model: str = "small"
+    device: str = "cpu"
+    compute_type: str = "int8"
+    beam_size: int = 1
+
+
+@dataclass
 class AppConfig:
     language: str = "fr"
     log_level: str = "INFO"
     audio: AudioConfig = field(default_factory=AudioConfig)
     llm: LLMConfig = field(default_factory=LLMConfig)
     storage: StorageConfig = field(default_factory=StorageConfig)
+    stt: STTConfig = field(default_factory=STTConfig)
 
 
 def _build(cls, data: dict):
@@ -48,14 +57,19 @@ def _build(cls, data: dict):
     return cls(**{k: v for k, v in data.items() if k in allowed})
 
 
+_SECTIONS = {
+    "audio": AudioConfig,
+    "llm": LLMConfig,
+    "storage": StorageConfig,
+    "stt": STTConfig,
+}
+
+
 def load_config(path: Path | str | None = None) -> AppConfig:
     path = Path(path) if path else DEFAULT_CONFIG_PATH
     raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
 
-    sections = ("audio", "llm", "storage")
-    audio = _build(AudioConfig, raw.get("audio") or {})
-    llm = _build(LLMConfig, raw.get("llm") or {})
-    storage = _build(StorageConfig, raw.get("storage") or {})
-    base = _build(AppConfig, {k: v for k, v in raw.items() if k not in sections})
-    base.audio, base.llm, base.storage = audio, llm, storage
+    base = _build(AppConfig, {k: v for k, v in raw.items() if k not in _SECTIONS})
+    for name, cls in _SECTIONS.items():
+        setattr(base, name, _build(cls, raw.get(name) or {}))
     return base

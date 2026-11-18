@@ -17,3 +17,9 @@ llm:
 
 storage:
   db_path: data/assistant.db
+
+stt:
+  model: base
+  device: cpu
+  compute_type: int8
+  beam_size: 1
