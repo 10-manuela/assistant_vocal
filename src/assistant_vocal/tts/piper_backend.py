@@ -34,4 +34,5 @@ class PiperBackend:
             parts.append(chunk.audio_float_array)
             rate = chunk.sample_rate
         audio = np.concatenate(parts) if parts else np.zeros(0, dtype=np.float32)
+        
         return audio, rate  # Piper ignore `emotion` : il n'est pas expressif

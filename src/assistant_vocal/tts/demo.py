@@ -12,7 +12,6 @@ SYSTEM = (
     "sans liste, sans numérotation, sans markdown."
 )
 
-
 def main() -> None:
     cfg = load_config()
     tts = build_tts(cfg)

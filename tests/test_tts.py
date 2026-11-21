@@ -45,3 +45,4 @@ def test_missing_voice_gives_clear_error(tmp_path):
 
     with pytest.raises(TTSError, match="download_voices"):
         PiperBackend("fr_FR-inconnue", tmp_path).load()
+        
