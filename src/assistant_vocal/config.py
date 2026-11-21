@@ -46,9 +46,13 @@ class STTConfig:
 
 @dataclass
 class TTSConfig:
-    backend: str = "piper"
-    voice: str = "fr_FR-siwis-medium"
+    backend: str = "kokoro"
+    voice: str = "ff_siwis"
     models_dir: str = "models/tts"
+    kokoro_model: str = "kokoro-v1.0.onnx"
+    kokoro_voices: str = "voices-v1.0.bin"
+    speed: float = 1.0
+    piper_voice: str = "fr_FR-siwis-medium"
 
 
 @dataclass

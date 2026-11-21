@@ -62,8 +62,21 @@ class TTS:
 
 
 def build_tts(cfg: AppConfig) -> TTS:
+    models_dir = ROOT_DIR / cfg.tts.models_dir
+    if cfg.tts.backend == "kokoro":
+        from assistant_vocal.tts.kokoro_backend import KokoroBackend
+
+        return TTS(
+            KokoroBackend(
+                models_dir,
+                cfg.tts.kokoro_model,
+                cfg.tts.kokoro_voices,
+                cfg.tts.voice,
+                speed=cfg.tts.speed,
+            )
+        )
     if cfg.tts.backend == "piper":
         from assistant_vocal.tts.piper_backend import PiperBackend
 
-        return TTS(PiperBackend(cfg.tts.voice, ROOT_DIR / cfg.tts.models_dir))
+        return TTS(PiperBackend(cfg.tts.piper_voice, models_dir))
     raise TTSError(f"Moteur TTS inconnu : '{cfg.tts.backend}'")

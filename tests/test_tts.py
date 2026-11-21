@@ -45,4 +45,19 @@ def test_missing_voice_gives_clear_error(tmp_path):
 
     with pytest.raises(TTSError, match="download_voices"):
         PiperBackend("fr_FR-inconnue", tmp_path).load()
-        
+
+def test_kokoro_missing_files_gives_clear_error(tmp_path):
+    from assistant_vocal.tts.kokoro_backend import KokoroBackend
+
+    with pytest.raises(TTSError, match="Kokoro introuvable"):
+        KokoroBackend(tmp_path).load()
+
+
+def test_unknown_backend_rejected():
+    from assistant_vocal.config import AppConfig
+    from assistant_vocal.tts import build_tts
+
+    cfg = AppConfig()
+    cfg.tts.backend = "inconnu"
+    with pytest.raises(TTSError, match="inconnu"):
+        build_tts(cfg)
