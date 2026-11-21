@@ -9,3 +9,12 @@ Fonctionnalités Clés :
 • Cerveau Contextuel Local : Propulsé par Ollama, l'assistant possède une mémoire de conversation active lui permettant de se souvenir des répliques précédentes et de maintenir un dialogue naturel et cohérent.
 
 • Interface Holographique Cinétique : Développée en CustomTkinter, l'interface arbore un look futuriste bleu électrique. Des anneaux concentriques tournent en sens inverses de manière asynchrone, pulsent en mode attente, et vibrent dynamiquement au rythme exact de la voix lorsque l'IA s'exprime.
+
+# À faire plus tard
+
+- [ ] Terminer le téléchargement de `small` (`download_model('small')`)
+- [ ] Mettre en place la cascade STT `base` + `small` (config, cascade.py, tests)
+- [ ] Remplacer le STT par un modèle plus précis si la latence le permet
+- [ ] Annulation d'écho et interruption (orchestrateur)
+- [ ] Multimodalité : vision (caméra, images, écran) via un modèle compatible Ollama
+- [ ] Transformation en agent IA : outils, mémoire à long terme, OpenClaw
