@@ -20,6 +20,7 @@ class SpeechDetector:
         self.model.reset_states()
         self.in_speech = False
         self._silence_count = 0
+        self.last_probability = 0.0
 
     def probability(self, block: np.ndarray) -> float:
         with torch.no_grad():
@@ -27,7 +28,8 @@ class SpeechDetector:
 
     def process(self, block: np.ndarray) -> str | None:
         """Retourne 'start', 'end' ou None."""
-        is_speech = self.probability(block) >= self.threshold
+        self.last_probability = self.probability(block)
+        is_speech = self.last_probability >= self.threshold
         if is_speech:
             self._silence_count = 0
             if not self.in_speech:

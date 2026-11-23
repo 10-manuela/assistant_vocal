@@ -22,10 +22,11 @@ storage:
   db_path: data/assistant.db
 
 stt:
-  model: base
+  model: small
   device: cpu
   compute_type: int8
-  beam_size: 1
+  beam_size: 5
+  initial_prompt: "Entretien professionnel en français : intelligence artificielle, humanités numériques, développeuse."
 
 tts:
   backend: piper
@@ -35,3 +36,19 @@ tts:
   kokoro_voices: voices-v1.0.bin
   speed: 1.0
   piper_voice: fr_FR-siwis-medium
+
+orchestrator:
+  barge_in_ms: 300
+  min_utterance_ms: 300
+  preroll_ms: 320
+  history_limit: 12
+  verified_barge_in_ms: 1000
+
+voiceprint:
+  enabled: true
+  model: wespeaker-resnet34
+  threshold: 0.45
+  min_check_ms: 1000
+  min_enroll_ms: 4000
+  short_policy: continuity
+  guest_timeout_s: 60

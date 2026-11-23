@@ -33,6 +33,7 @@ class Transcriber:
         compute_type: str = "int8",
         language: str | None = "fr",
         beam_size: int = 1,
+        initial_prompt: str | None = None,
         model=None,
     ):
         self.model_size = model_size
@@ -41,6 +42,7 @@ class Transcriber:
         self.language = language
         self.beam_size = beam_size
         self._model = model  # injectable pour les tests
+        self.initial_prompt = initial_prompt
 
     @classmethod
     def from_config(cls, cfg: AppConfig) -> "Transcriber":
@@ -50,6 +52,7 @@ class Transcriber:
             compute_type=cfg.stt.compute_type,
             language=cfg.language,
             beam_size=cfg.stt.beam_size,
+            initial_prompt=cfg.stt.initial_prompt or None,
         )
 
     def _load(self):
@@ -78,6 +81,7 @@ class Transcriber:
             beam_size=self.beam_size,
             vad_filter=True,  # évite les phrases inventées sur du silence
             condition_on_previous_text=False,
+            initial_prompt=self.initial_prompt,
         )
         text = " ".join(s.text.strip() for s in segments).strip()
         elapsed = time.perf_counter() - start
