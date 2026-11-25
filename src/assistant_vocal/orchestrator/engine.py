@@ -12,6 +12,7 @@ from enum import Enum
 import numpy as np
 
 from assistant_vocal.config import DEFAULT_SYSTEM_PROMPT, AppConfig
+from assistant_vocal.dialogue.steps import Compute, Generate, Quit, RecordUser, Say, Session
 from assistant_vocal.llm import make_message
 from assistant_vocal.orchestrator.speaker import Speaker
 from assistant_vocal.voiceprint import ADD_GUEST, OWNER, REMOVE_GUEST, SpeakerGate, detect_intent
@@ -53,6 +54,7 @@ class Orchestrator:
         speaker: Speaker,
         *,
         gate: SpeakerGate | None = None,
+        dialogue=None,
         block_ms: int = 32,
         system_prompt: str = DEFAULT_SYSTEM_PROMPT,
         barge_in_ms: int = 300,
@@ -68,10 +70,12 @@ class Orchestrator:
         self.speaker = speaker
         self.speaker.on_start = self._on_speaker_start
         self.gate = gate
+        self.dialogue = dialogue  # chef de dialogue (Mervi) ; None = assistant simple
         self.system_prompt = system_prompt
         self.history_limit = history_limit
         self.guest_timeout_s = guest_timeout_s
         self.on_event = on_event
+        self.finished = False  # passe à True quand l'utilisateur quitte la discussion
 
         self.barge_in_blocks = max(1, barge_in_ms // block_ms)
         self.verified_barge_in_blocks = max(1, verified_barge_in_ms // block_ms)
@@ -102,12 +106,13 @@ class Orchestrator:
         self.conversation_id = conversation_id
 
     @classmethod
-    def from_config(cls, cfg: AppConfig, stt, llm, tts, store, vad, gate=None,
+    def from_config(cls, cfg: AppConfig, stt, llm, tts, store, vad, gate=None, dialogue=None,
                     conversation_id=None, on_event=None) -> "Orchestrator":
         o = cfg.orchestrator
         return cls(
             stt, llm, tts, store, vad, Speaker(device=cfg.audio.output_device),
             gate=gate,
+            dialogue=dialogue,
             block_ms=cfg.audio.block_ms,
             system_prompt=o.system_prompt,
             barge_in_ms=o.barge_in_ms,
@@ -196,14 +201,31 @@ class Orchestrator:
             self._emit("ignored", {"score": verdict.score, "reason": "barge_in"})
 
     def run(self, mic, stop_event: threading.Event | None = None) -> None:
-        """Boucle principale : lit le micro jusqu'à l'arrêt."""
+        """Boucle principale : lit le micro jusqu'à l'arrêt ou jusqu'à « au revoir »."""
         stop_event = stop_event or threading.Event()
-        while not stop_event.is_set():
+        while not stop_event.is_set() and not self.finished:
             try:
                 block = mic.read(timeout=0.5)
             except queue.Empty:
                 continue
             self.handle_block(block)
+
+    # --- démarrage -------------------------------------------------------
+
+    def start(self) -> None:
+        """Accueil de Mervi, puis enregistrement de la voix si un filtre est actif. Bloquant."""
+        if self.dialogue is None:
+            raise RuntimeError("start() demande un chef de dialogue")
+        ask_voice = self.gate is not None
+        turn = Turn(t_end=None)
+        self._turn = turn
+        if ask_voice:
+            self.begin_enrollment(OWNER)  # avant de parler : l'utilisateur peut couper la parole
+        steps = self.dialogue.greeting_steps(ask_voice=ask_voice)
+        if not ask_voice:
+            steps += self.dialogue.menu_steps()
+        self._execute(turn, steps, None)
+        self._set_state(State.LISTENING, turn)
 
     # --- enrôlement des voix ---------------------------------------------
 
@@ -218,7 +240,7 @@ class Orchestrator:
         self._emit("enrolling", name)
 
     def _handle_enrollment(self, turn: Turn, audio: np.ndarray) -> bool:
-        """Retourne True si l'énoncé a servi à l'enrôlement (pas de STT, pas de LLM)."""
+        """Retourne True si l'énoncé a servi à l'enrôlement (pas de LLM)."""
         if self.gate is None:
             return False
         with self._enroll_lock:
@@ -234,11 +256,22 @@ class Orchestrator:
             if done:
                 self.gate.enroll(name, total)
                 self._pending, self._pending_audio = None, []
-        if done:
-            self._emit("enrolled", name)
-            self._say_fixed(turn, MSG_OWNER_OK if name == OWNER else MSG_GUEST_OK)
-        else:
+        if not done:
             self._say_fixed(turn, MSG_MORE)
+            return True
+
+        self._emit("enrolled", name)
+        if name == OWNER and self.dialogue is not None:
+            # La présentation sert aussi à retenir le prénom, puis Mervi présente ses modes
+            try:
+                intro = (self.stt.transcribe(total).text or "").strip()
+            except Exception:
+                log.exception("Transcription de la présentation impossible")
+                intro = ""
+            self.dialogue.set_user_intro(intro)
+            self._execute(turn, self.dialogue.on_enrolled(), None)
+        else:
+            self._say_fixed(turn, MSG_OWNER_OK if name == OWNER else MSG_GUEST_OK)
         return True
 
     def _say_fixed(self, turn: Turn, text: str) -> None:
@@ -302,8 +335,10 @@ class Orchestrator:
             if intent is not None:
                 self._handle_intent(turn, intent)
                 return
-            self.history.append(make_message("user", text))
-            self.store.add_message(self.conversation_id, "user", text)
+            if self.dialogue is not None:
+                self._execute(turn, self.dialogue.handle(text), text)
+                return
+            self._record("user", text)
             self._respond(turn)
         except Exception as exc:
             log.exception("Erreur pendant le tour de parole")
@@ -311,8 +346,57 @@ class Orchestrator:
         finally:
             self._finish(turn)
 
-    def _respond(self, turn: Turn) -> None:
-        messages = [make_message("system", self.system_prompt)] + self.history[-self.history_limit:]
+    # --- exécution des étapes du dialogue --------------------------------
+
+    def _execute(self, turn: Turn, steps: list, user_text: str | None) -> None:
+        pending = list(steps)
+        while pending and not turn.cancel.is_set():
+            step = pending.pop(0)
+            if isinstance(step, Say):
+                self._speak(turn, step.text, step.record)
+            elif isinstance(step, RecordUser):
+                if user_text:
+                    self._record("user", user_text)
+            elif isinstance(step, Session):
+                self._new_session(step.title)
+            elif isinstance(step, Generate):
+                self._respond(turn, step.system, step.instruction)
+            elif isinstance(step, Compute):
+                pending[0:0] = step.fn()  # étapes calculées maintenant (ex. : bilan de l'entretien)
+            elif isinstance(step, Quit):
+                self.finished = True
+                self._emit("quit")
+
+    def _speak(self, turn: Turn, text: str, record: bool) -> None:
+        """Joue un texte préparé, phrase par phrase (interruptible)."""
+        before = len(turn.played)
+        for speech in self.tts.stream([text]):
+            if turn.cancel.is_set() or not self.speaker.say(turn, speech):
+                break
+        if not turn.cancel.is_set():
+            self.speaker.wait()
+        said = " ".join(turn.played[before:]).strip()
+        del turn.played[before:]  # seules les réponses du LLM restent pour _finish
+        if record and said:
+            self._record("assistant", said)
+            self._emit("assistant", said)
+
+    def _record(self, role: str, text: str) -> None:
+        self.history.append(make_message(role, text))
+        self.store.add_message(self.conversation_id, role, text)
+
+    def _new_session(self, title: str) -> None:
+        """Nouvelle conversation enregistrée (la précédente est supprimée si elle est vide)."""
+        if not self.store.get_messages(self.conversation_id):
+            self.store.delete_conversation(self.conversation_id)
+        self.conversation_id = self.store.create_conversation(title).id
+        self.history.clear()
+        self._emit("session", title)
+
+    def _respond(self, turn: Turn, system: str | None = None, instruction: str | None = None) -> None:
+        messages = [make_message("system", system or self.system_prompt)] + self.history[-self.history_limit:]
+        if instruction:  # consigne cachée : envoyée au LLM mais pas enregistrée
+            messages.append(make_message("user", instruction))
         stream = self.llm.stream(messages)
         t0 = time.perf_counter()
 
@@ -340,8 +424,7 @@ class Orchestrator:
     def _finish(self, turn: Turn) -> None:
         reply = " ".join(turn.played).strip()  # uniquement ce qui a été réellement dit
         if reply:
-            self.history.append(make_message("assistant", reply))
-            self.store.add_message(self.conversation_id, "assistant", reply)
+            self._record("assistant", reply)
             self._emit("assistant", reply)
         self._set_state(State.LISTENING, turn)
 

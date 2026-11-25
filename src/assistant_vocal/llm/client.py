@@ -35,8 +35,8 @@ def make_message(role: str, content: str, images: list[bytes] | None = None) -> 
 class LLMClient:
     def __init__(
         self,
-        host: str = "http://localhost:11434",
-        model: str = "qwen2.5:3b",
+        host: str = "http://127.0.0.1:11434",
+        model: str = "llama3.2:3b",
         temperature: float = 0.7,
         num_ctx: int = 4096,
         keep_alive: str = "30m",
@@ -81,11 +81,14 @@ class LLMClient:
             return LLMError(f"Modèle '{self.model}' absent. Lance : ollama pull {self.model}")
         return LLMError(f"Erreur HTTP {exc.code} d'Ollama")
 
-    def stream(self, messages: list[dict], tools: list[dict] | None = None) -> Iterator[str]:
+    def stream(self, messages: list[dict], tools: list[dict] | None = None,
+               fmt=None, options: dict | None = None) -> Iterator[str]:
         """Génère la réponse morceau par morceau.
 
+        fmt="json" (ou un schéma JSON) force une sortie JSON valide ; options remplace
+        des réglages du modèle pour cet appel (ex. {"temperature": 0, "num_predict": 200}).
         Fermer le générateur (break, .close()) coupe la requête : c'est ce qui
-        permettra l'interruption quand l'utilisateur coupe la parole.
+        permet l'interruption quand l'utilisateur coupe la parole.
         """
         payload = {
             "model": self.model,
@@ -96,6 +99,10 @@ class LLMClient:
         }
         if tools:
             payload["tools"] = tools
+        if fmt:
+            payload["format"] = fmt
+        if options:
+            payload["options"].update(options)
 
         self.last_tool_calls = []
         self.last_stats = None
@@ -134,5 +141,6 @@ class LLMClient:
         speed = tokens / eval_seconds if tokens and eval_seconds else 0.0
         self.last_stats = ChatStats(first, total, tokens, speed)
 
-    def chat(self, messages: list[dict], tools: list[dict] | None = None) -> str:
-        return "".join(self.stream(messages, tools))
+    def chat(self, messages: list[dict], tools: list[dict] | None = None,
+             fmt=None, options: dict | None = None) -> str:
+        return "".join(self.stream(messages, tools, fmt, options))

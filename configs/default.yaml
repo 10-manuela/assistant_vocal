@@ -26,7 +26,7 @@ stt:
   device: cpu
   compute_type: int8
   beam_size: 5
-  initial_prompt: "Entretien professionnel en français : intelligence artificielle, humanités numériques, développeuse."
+  initial_prompt: "Mervi, mode entretien, mode découverte, au revoir."
 
 tts:
   backend: piper
@@ -52,3 +52,9 @@ voiceprint:
   min_enroll_ms: 4000
   short_policy: continuity
   guest_timeout_s: 60
+
+dialogue:
+  enabled: true
+  min_answer_words: 6
+  judge_timeout_s: 120
+  min_evaluated_ratio: 0.7

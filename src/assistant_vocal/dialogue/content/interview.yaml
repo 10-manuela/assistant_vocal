@@ -1,0 +1,214 @@
+# Contenu de l'entretien de Mervi. Modifiable sans toucher au code.
+# Les entreprises sont fictives. Les critères sont des groupes nominaux : ils sont
+# lus à voix haute dans le bilan final (« points forts : ... », « à travailler : ... »).
+
+nb_profils: 4            # profils recherchés par entretien (le profil « obligatoire » est toujours inclus)
+
+# Ordre et nature des 10 questions. « profil » = question propre au poste choisi.
+composition: [parcours, motivation, profil, comportemental, profil, situation, profil, comportemental, profil, projet]
+
+companies:
+  - nom: Kélora
+    type: startup
+    pitch: "Kélora est une startup de quarante personnes qui développe des outils d'intelligence artificielle pour la santé. Nous sommes en pleine levée de fonds et nous doublons nos équipes cette année."
+  - nom: Solenys
+    type: grande entreprise
+    pitch: "Solenys est un groupe de trois mille personnes, spécialisé dans la mobilité connectée. Nous menons une grande transformation numérique et nous recrutons dans toutes nos équipes."
+  - nom: Arvéa
+    type: scale-up
+    pitch: "Arvéa est une jeune entreprise en forte croissance, qui conçoit des expériences numériques pour les musées, les écoles et le patrimoine. Nous sommes une trentaine et nous ouvrons de nouveaux marchés en Europe."
+
+profiles:
+  - id: ia
+    obligatoire: true
+    nom: "développeur ou développeuse en intelligence artificielle"
+    court: "développeur IA"
+    mots_cles: ["ia", "intelligence artificielle", "machine learning", "apprentissage automatique", "deep learning", "developpeur ia", "developpeuse ia", "ingenieur ia"]
+    criteres: ["la maîtrise des bases du machine learning", "la qualité du code et des outils", "la rigueur dans l'évaluation des modèles", "la conscience des enjeux éthiques"]
+    seuil: 0.65
+    eliminatoire: 0.45
+    questions:
+      - id: ia-1
+        text: "Pouvez-vous m'expliquer simplement comment fonctionne l'entraînement d'un modèle de machine learning, et ce qui distingue un bon modèle d'un modèle qui fait du surapprentissage ?"
+        criteres: ["l'explication du principe d'entraînement : données, ajustement, évaluation", "la définition du surapprentissage", "une parade : validation, régularisation ou davantage de données"]
+      - id: ia-2
+        text: "Vous devez intégrer un modèle de langage dans un produit destiné à des clients. Quelles précautions prenez-vous avant de le mettre en production ?"
+        criteres: ["les tests sur des cas réels", "la gestion des erreurs et des réponses inventées", "la confidentialité des données, la latence ou les coûts"]
+      - id: ia-3
+        text: "Quels langages et quels outils utilisez-vous au quotidien pour développer des solutions d'intelligence artificielle, et pourquoi ces choix ?"
+        criteres: ["l'usage de Python et de bibliothèques adaptées", "la justification des choix", "le versionnage, les tests ou le déploiement"]
+      - id: ia-4
+        text: "Comment mesurez-vous qu'un modèle est suffisamment bon pour être utilisé, au-delà d'un simple score de précision ?"
+        criteres: ["le choix de métriques adaptées au problème", "un jeu de test représentatif ou les cas limites", "le lien avec l'usage réel et les risques"]
+      - id: ia-5
+        text: "Quels enjeux éthiques ou de biais vous semblent importants quand on développe un système d'intelligence artificielle, et que faites-vous concrètement pour les limiter ?"
+        criteres: ["l'identification d'un risque précis : biais, discrimination ou vie privée", "une action concrète : audit, données équilibrées ou transparence", "le sens de la responsabilité envers les utilisateurs"]
+      - id: ia-6
+        text: "Racontez-moi un projet d'intelligence artificielle que vous avez mené : l'objectif, les difficultés rencontrées et le résultat."
+        criteres: ["un objectif clairement exposé", "une difficulté technique et sa résolution", "un résultat ou un apprentissage"]
+
+  - id: data
+    nom: "data analyst, c'est-à-dire analyste de données"
+    court: "data analyst"
+    mots_cles: ["data analyst", "analyste de donnees", "analyste data", "analyse de donnees", "data"]
+    criteres: ["la rigueur dans le traitement des données", "la maîtrise des outils d'analyse", "la capacité à expliquer des résultats"]
+    seuil: 0.65
+    eliminatoire: 0.45
+    questions:
+      - id: data-1
+        text: "Vous recevez un jeu de données brut, avec des valeurs manquantes et des doublons. Comment procédez-vous avant toute analyse ?"
+        criteres: ["l'exploration et la description des données", "un traitement justifié des doublons et des valeurs manquantes", "la vérification ou la documentation des transformations"]
+      - id: data-2
+        text: "Comment présentez-vous les résultats d'une analyse complexe à un dirigeant qui n'est pas technique ?"
+        criteres: ["l'adaptation du langage au public", "le message clé et la recommandation", "le choix d'une visualisation adaptée"]
+      - id: data-3
+        text: "Quelle est la différence entre corrélation et causalité ? Donnez-moi un exemple."
+        criteres: ["la définition des deux notions", "un exemple pertinent", "une précaution ou un moyen de tester"]
+      - id: data-4
+        text: "Quels outils utilisez-vous pour interroger et visualiser des données, et dans quels cas choisissez-vous l'un plutôt que l'autre ?"
+        criteres: ["SQL ou un langage d'analyse", "un outil de visualisation", "la justification selon le besoin"]
+      - id: data-5
+        text: "Décrivez une analyse que vous avez réalisée et qui a changé une décision."
+        criteres: ["le contexte et la question de départ", "la méthode employée", "l'impact concret"]
+
+  - id: fullstack
+    nom: "développeur ou développeuse web full-stack"
+    court: "développeur full-stack"
+    mots_cles: ["full stack", "fullstack", "developpeur web", "developpeuse web", "application web", "site web", "front end", "back end"]
+    criteres: ["la solidité technique front-end et back-end", "la qualité et la maintenabilité du code", "la sécurité des applications"]
+    seuil: 0.65
+    eliminatoire: 0.45
+    questions:
+      - id: fs-1
+        text: "Expliquez-moi ce qui se passe, de bout en bout, quand un utilisateur clique sur un bouton « Valider » dans une application web."
+        criteres: ["le côté navigateur : événement et requête", "le côté serveur : traitement et base de données", "le retour de la réponse et l'affichage"]
+      - id: fs-2
+        text: "Comment organisez-vous votre code pour qu'il reste maintenable quand une application grandit ?"
+        criteres: ["la structure en modules ou en couches", "les tests", "les revues de code ou la documentation"]
+      - id: fs-3
+        text: "Quelles mesures de sécurité mettez-vous en place sur une application web qui gère des comptes utilisateurs ?"
+        criteres: ["l'authentification et les mots de passe hachés", "la protection contre les failles courantes", "le chiffrement des échanges ou la gestion des droits"]
+      - id: fs-4
+        text: "Comment gérez-vous un bug en production qui touche plusieurs utilisateurs ?"
+        criteres: ["la priorisation et la communication", "la recherche de la cause avec des journaux ou des outils", "la correction puis la prévention"]
+      - id: fs-5
+        text: "Quelle technologie avez-vous apprise récemment, et comment l'avez-vous apprise ?"
+        criteres: ["une technologie précise", "une méthode d'apprentissage active", "une application dans un projet"]
+
+  - id: ux
+    nom: "designer UX UI, c'est-à-dire concepteur ou conceptrice d'interfaces"
+    court: "designer UX UI"
+    mots_cles: ["ux", "ui", "designer", "design", "ergonomie", "experience utilisateur", "interface"]
+    criteres: ["la démarche centrée sur l'utilisateur", "la qualité de la conception", "la collaboration avec les équipes techniques"]
+    seuil: 0.6
+    eliminatoire: 0.4
+    questions:
+      - id: ux-1
+        text: "Décrivez votre démarche pour concevoir l'interface d'une application, de la première idée jusqu'à la version finale."
+        criteres: ["la recherche des besoins des utilisateurs", "les maquettes ou prototypes puis les tests", "l'amélioration selon les retours"]
+      - id: ux-2
+        text: "Comment savez-vous qu'une interface est réellement facile à utiliser ?"
+        criteres: ["les tests avec des utilisateurs", "des indicateurs ou de l'observation", "la correction à partir des constats"]
+      - id: ux-3
+        text: "Un développeur vous dit que l'une de vos maquettes est trop coûteuse à réaliser. Que faites-vous ?"
+        criteres: ["l'écoute de la contrainte", "la recherche d'un compromis", "le besoin de l'utilisateur gardé au centre"]
+      - id: ux-4
+        text: "Quelle place donnez-vous à l'accessibilité dans votre travail, et comment l'intégrez-vous ?"
+        criteres: ["l'explication du principe", "une pratique concrète : contrastes, navigation au clavier ou textes alternatifs", "son intégration dès la conception"]
+      - id: ux-5
+        text: "Présentez-moi un projet de conception dont vous êtes fier ou fière, et expliquez vos choix."
+        criteres: ["le contexte et l'objectif", "des choix justifiés", "un résultat ou un retour d'utilisateurs"]
+
+  - id: projet
+    nom: "chef ou cheffe de projet digital"
+    court: "chef de projet digital"
+    mots_cles: ["chef de projet", "cheffe de projet", "chef projet", "projet digital", "product owner", "product manager", "gestion de projet"]
+    criteres: ["l'organisation et la priorisation", "la communication avec l'équipe et les clients", "la gestion des imprévus"]
+    seuil: 0.6
+    eliminatoire: 0.4
+    questions:
+      - id: pj-1
+        text: "Votre projet prend deux semaines de retard à cause d'un imprévu technique. Comment réagissez-vous ?"
+        criteres: ["l'analyse de l'impact", "la communication avec l'équipe et le client", "la replanification ou l'arbitrage"]
+      - id: pj-2
+        text: "Comment organisez-vous et suivez-vous le travail d'une équipe pluridisciplinaire ?"
+        criteres: ["une méthode ou un outil de suivi", "des points réguliers", "des rôles clairs"]
+      - id: pj-3
+        text: "Comment priorisez-vous les fonctionnalités quand le budget est limité ?"
+        criteres: ["des critères : valeur, coût et risque", "l'implication des parties prenantes", "la réévaluation régulière"]
+      - id: pj-4
+        text: "Décrivez une situation où deux membres de votre équipe étaient en désaccord. Quel a été votre rôle ?"
+        criteres: ["une situation précise", "une action de médiation", "l'issue"]
+      - id: pj-5
+        text: "Comment mesurez-vous le succès d'un projet digital une fois livré ?"
+        criteres: ["des indicateurs précis", "les retours des utilisateurs", "un bilan et des améliorations"]
+
+  - id: mediation
+    nom: "chargé ou chargée de médiation culturelle numérique"
+    court: "chargé de médiation numérique"
+    mots_cles: ["mediation", "culturel", "culture", "patrimoine", "humanites numeriques", "musee"]
+    criteres: ["la connaissance des publics", "la maîtrise des outils numériques de valorisation", "la rigueur sur les sources et les contenus"]
+    seuil: 0.6
+    eliminatoire: 0.4
+    questions:
+      - id: md-1
+        text: "Comment feriez-vous découvrir le patrimoine d'un musée à un public qui ne s'y intéresse pas, grâce au numérique ?"
+        criteres: ["l'identification du public visé", "un dispositif numérique concret", "la recherche de l'engagement ou de l'accessibilité"]
+      - id: md-2
+        text: "Quels outils numériques utilisez-vous pour créer ou valoriser un contenu culturel ?"
+        criteres: ["des outils précis", "le lien entre les outils et un objectif", "l'attention portée aux droits et aux sources"]
+      - id: md-3
+        text: "Comment vérifiez-vous la fiabilité d'une source avant de l'utiliser dans un contenu destiné au public ?"
+        criteres: ["le croisement de plusieurs sources", "l'évaluation de l'auteur et de la date", "la citation des sources"]
+      - id: md-4
+        text: "Comment évaluez-vous l'impact d'une action de médiation numérique ?"
+        criteres: ["des indicateurs de fréquentation ou de participation", "des retours qualitatifs", "l'ajustement de l'action"]
+      - id: md-5
+        text: "Donnez-moi un exemple de projet culturel ou numérique que vous avez mené ou auquel vous avez participé."
+        criteres: ["l'objectif du projet", "le rôle personnel", "le résultat"]
+
+generic:
+  parcours:
+    - id: pa-1
+      text: "Pouvez-vous vous présenter et me retracer votre parcours, en insistant sur ce qui vous prépare à ce poste ?"
+      criteres: ["la formation et les expériences", "un fil conducteur cohérent", "le lien avec le poste visé"]
+    - id: pa-2
+      text: "Parmi vos expériences, laquelle vous a le plus appris, et pourquoi ?"
+      criteres: ["une expérience précise", "ce qui a été appris", "une évolution personnelle"]
+  motivation:
+    - id: mo-1
+      text: "Pourquoi souhaitez-vous rejoindre notre entreprise plutôt qu'une autre ?"
+      criteres: ["la connaissance de l'entreprise ou de son secteur", "des motivations argumentées", "le lien entre ses compétences et nos besoins"]
+    - id: mo-2
+      text: "Qu'est-ce qui vous motive dans ce métier, et qu'est-ce qui pourrait vous décourager ?"
+      criteres: ["des motivations sincères", "la lucidité sur les difficultés", "la cohérence avec le poste"]
+  comportemental:
+    - id: co-1
+      text: "Racontez-moi une situation où vous avez dû travailler avec quelqu'un dont le caractère ou les méthodes étaient très différents des vôtres."
+      criteres: ["une situation précise", "une action personnelle", "le résultat et l'enseignement"]
+    - id: co-2
+      text: "Parlez-moi d'un échec, professionnel ou scolaire, et de ce que vous en avez retenu."
+      criteres: ["un échec réel reconnu", "l'analyse des causes sans accuser les autres", "ce qui a changé ensuite"]
+    - id: co-3
+      text: "Donnez-moi un exemple où vous avez pris une initiative sans qu'on vous le demande."
+      criteres: ["une initiative concrète", "la motivation de la démarche", "le résultat"]
+    - id: co-4
+      text: "Comment gérez-vous la pression lorsque plusieurs échéances tombent en même temps ?"
+      criteres: ["une méthode d'organisation", "la priorisation", "la communication en cas de difficulté"]
+  situation:
+    - id: si-1
+      text: "Un collègue vous demande de l'aide pour une tâche urgente alors que vous êtes déjà débordé. Que faites-vous ?"
+      criteres: ["l'évaluation des priorités", "une communication claire", "une solution équilibrée"]
+    - id: si-2
+      text: "Vous constatez une erreur dans un travail que vous avez déjà livré à un client. Comment réagissez-vous ?"
+      criteres: ["la transparence immédiate", "la correction", "la prévention d'une répétition"]
+    - id: si-3
+      text: "On vous confie une mission dans un domaine que vous ne maîtrisez pas encore. Comment vous y prenez-vous ?"
+      criteres: ["l'identification de ses lacunes", "la formation ou la demande d'aide", "le respect du délai"]
+  projet:
+    - id: pr-1
+      text: "Où vous voyez-vous dans trois ans, et que comptez-vous faire pour y arriver ?"
+      criteres: ["une projection réaliste", "des actions concrètes", "la cohérence avec l'entreprise"]
+    - id: pr-2
+      text: "Quels sont vos principaux points forts, et quel point cherchez-vous à améliorer ?"
+      criteres: ["des points forts illustrés", "un axe d'amélioration honnête", "une démarche pour progresser"]

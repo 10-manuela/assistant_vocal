@@ -75,6 +75,19 @@ class VoiceprintConfig:
 
 
 @dataclass
+class DialogueConfig:
+    enabled: bool = True
+    min_answer_words: int = 6  # en dessous : Mervi demande de développer, une fois
+    judge_timeout_s: float = 120.0
+    min_evaluated_ratio: float = 0.7  # part minimale de réponses évaluées pour décider
+    weight_content: float = 0.6
+    weight_form: float = 0.2
+    weight_language: float = 0.2
+    weight_profile_questions: float = 2.0  # poids des questions propres au poste
+    seed: int | None = None  # fixe le tirage au sort (tests)
+
+
+@dataclass
 class OrchestratorConfig:
     barge_in_ms: int = 300
     verified_barge_in_ms: int = 1000
@@ -94,6 +107,7 @@ class AppConfig:
     stt: STTConfig = field(default_factory=STTConfig)
     tts: TTSConfig = field(default_factory=TTSConfig)
     voiceprint: VoiceprintConfig = field(default_factory=VoiceprintConfig)
+    dialogue: DialogueConfig = field(default_factory=DialogueConfig)
     orchestrator: OrchestratorConfig = field(default_factory=OrchestratorConfig)
 
 
@@ -110,6 +124,7 @@ _SECTIONS = {
     "stt": STTConfig,
     "tts": TTSConfig,
     "voiceprint": VoiceprintConfig,
+    "dialogue": DialogueConfig,
     "orchestrator": OrchestratorConfig,
 }
 
